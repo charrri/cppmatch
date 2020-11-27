@@ -3,6 +3,7 @@
 std::map<int,PrcLinkT*> gOrdrBk[MAX_DIR];
 int64_t gOrdrCnt = 0;
 int64_t gTradeCnt = 0;
+bool gIfLog = true;
 //atomic_int64_t
 
 void match(spOrderT inOrdr);
@@ -20,6 +21,7 @@ void initOrdrBk(int ordrCnt) {
 
 template<typename T>
 void log(T s) {
+    if (!gIfLog) return;
     std::cout << s << std::endl;
 }
 
@@ -72,8 +74,10 @@ void matchInPrcLink(T begin, T end, spOrderT inOrdr, std::vector<TradeS>& trades
 			auto& ordrList = *(begin->second);
 			for (auto it = ordrList.begin(); it != ordrList.end();) {
                 auto& bkO = *(it->get());
-                std::cout << "bkO: ";
-                showOrdr(*it);
+                if (gIfLog) {
+                    std::cout << "bkO: ";
+                    showOrdr(*it);
+                }                
                 if (!CheckAccountCanDeal(o.trdngAcntCd,bkO.trdngAcntCd)) {
                 	log("same trading account,skip");
                     it++;
@@ -91,7 +95,7 @@ void matchInPrcLink(T begin, T end, spOrderT inOrdr, std::vector<TradeS>& trades
 					gTradeCnt++;
 					//trade() // to do
                     tradesV.push_back(trd);
-					std::cout << "trade:" << trd.vol << std::endl;
+                    if (gIfLog)	std::cout << "trade:" << trd.vol << std::endl;
 					return;
 				} else {
 					trd.vol += bkO.vol;
@@ -101,7 +105,7 @@ void matchInPrcLink(T begin, T end, spOrderT inOrdr, std::vector<TradeS>& trades
                     gTradeCnt++;
 					//trade() // to do
                     tradesV.push_back(trd);
-                    std::cout << "trade:" << trd.vol << std::endl;
+                    if (gIfLog)	std::cout << "trade:" << trd.vol << std::endl;
 				}
             }
         }
@@ -132,6 +136,7 @@ void match(spOrderT inOrdr) {
 }
 
 void showOrdr(spOrderT inOrdr, OrdrPrintType t) {
+    if (!gIfLog) return;
     char buf[128] = {0};
     auto &o = *inOrdr;
     if (t == PRINT_DEFAULT) {
