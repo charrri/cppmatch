@@ -94,7 +94,7 @@ void matchInPrcLink(T begin, T end, spOrderT inOrdr, std::vector<TradeS>& trades
 					}
 					gTradeCnt++;
 					//trade() // to do
-                    tradesV.push_back(trd);
+                    //tradesV.push_back(trd);
                     if (gIfLog)	std::cout << "trade:" << trd.vol << std::endl;
 					return;
 				} else {
@@ -104,7 +104,7 @@ void matchInPrcLink(T begin, T end, spOrderT inOrdr, std::vector<TradeS>& trades
 					ordrList.erase(it++);
                     gTradeCnt++;
 					//trade() // to do
-                    tradesV.push_back(trd);
+                    //tradesV.push_back(trd);
                     if (gIfLog)	std::cout << "trade:" << trd.vol << std::endl;
 				}
             }
@@ -153,4 +153,36 @@ void showOrdr(spOrderT inOrdr, OrdrPrintType t) {
     }
     
     log(buf);
+}
+
+void GetSysTimestamp(int64_t* timestamp) {
+    struct timeval t_val;
+    gettimeofday(&t_val, nullptr);
+    
+    int64_t us = (int64_t)t_val.tv_sec * 1000000 + (int64_t)t_val.tv_usec;
+    *timestamp = us;
+}
+
+void freeAll() {
+    for (size_t i = 0; i < MAX_DIR; i++)
+    {
+        for (size_t p = 0; p < PRDUCT_NUM + 1; p++)
+        {
+            auto m = gOrdrBk[i][p];
+            for (auto it = m->begin(); it != m->end(); it++)
+            {
+                it->second->clear();
+                delete it->second;
+            }
+            m->clear();
+            delete m;
+        }
+    }
+    gOrdrCnt = 0;
+    gTradeCnt = 0;
+    log("free all");
+}
+
+void setLog(bool f) {
+    gIfLog = f;
 }

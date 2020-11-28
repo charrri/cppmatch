@@ -6,6 +6,7 @@
 #include <map>
 #include <list>
 #include <vector>
+#include <sys/time.h>
 //#include <atomic>
 
 /*Macro*/
@@ -51,8 +52,10 @@ typedef enum {
 void initOrdrBk(int ordrCnt);
 void addOrdr(spOrderT o);
 void showOrdr(spOrderT inOrdr, OrdrPrintType type = PRINT_DEFAULT);
+void GetSysTimestamp(int64_t* timestamp);
 template<typename T>
 void log(T s);
-
+void freeAll();
+void setLog(bool f);
 
 
